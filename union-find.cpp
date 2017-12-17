@@ -1,3 +1,4 @@
+#include<stdio.h>
 #include<iostream>
 #include<string>
 #include<vector>
@@ -8,76 +9,55 @@
 #include<algorithm>
 #include<utility>
 #include<memory>
+#include<cmath>
  
 #define ALL(g) (g).begin(),(g).end()
 #define REP(i, x, n) for(int i = x; i < n; i++)
 #define rep(i,n) REP(i,0,n)
 #define EXIST(s,e) ((s).find(e)!=(s).end())
-#define INF 1<<25
 #define pb push_back
  
-typedef long long ll;
- 
 using namespace std;
+ 
+typedef long long ll;
+typedef pair<int,int> P;
+const int mod=1e9+7;
+const int INF=1<<30;
+const int MAX_N=100001;
 
-void init(int par[],int rank[],int N){
-  rep(i,N){
-    par[i]=i;
-    rank[i]=0;
+struct UnionFindTree{
+  int par[MAX_N],rank[MAX_N],size[MAX_N];
+  UnionFindTree(int N){
+    fill(rank,rank+N,0);
+    fill(size,size+N,1);
+    rep(i,N) par[i]=i;
   }
-  return ;
-}
-
-int find(int par[],int x){
-  if(par[x]==x) return x;
-  else return par[x]=find(par,par[x]);
-}
-
-void unite(int par[],int rank[],int x,int y){
-  x=find(par,x);
-  y=find(par,y);
-  if(x==y)  return ;
-  if(rank[x]<rank[y]){
-    par[x]=y;
-  }else{
-    par[y]=x;
-    if(rank[x]==rank[y])  ++rank[x];
+  int find(int x){
+    if(par[x]==x) return x;
+    else  return par[x]=find(par[x]);
   }
-  return ;
-}
+  void unite(int x,int y){
+    x=find(x);
+    y=find(y);
+    if(x==y)  return ;
+    if(rank[x]<rank[y]){
+      par[x]=y;
+    }else{
+      par[y]=x;
+      if(rank[x]==rank[y])  ++rank[x];
+    }
+    size[x]=size[y]=size[x]+size[y];
+  }
+  bool same(int x,int y){
+    return find(x)==find(y);
+  }
+};
 
-bool same(int par[],int x,int y){
-  if(par[x]==par[y])  return true;
-  else  return false;
-}
+UnionFindTree u(100);
 
 int main(){
-  int N,K,L;
-  cin >> N >> K >> L ;
-  int p[K+1],q[K+1],r[L+1],s[L+1];
-  int par1[N+1],rank1[N+1],par2[N+1],rank2[N+1];
-  init(par1,rank1,N);
-  init(par2,rank2,N);
-  int a,b;
-  rep(i,K){
-    cin >> a >> b ;
-    unite(par1,rank1,a-1,b-1);
-  }
-  rep(i,L){
-    cin >> a >> b ;
-    unite(par2,rank2,a-1,b-1);
-  }
-  map<pair<int,int>,int> mp;
-  rep(i,N){
-    a=find(par1,i);
-    b=find(par2,i);
-    if(mp.find({a,b})!=mp.end()){
-      mp[{a,b}]++;
-    }else{
-      mp[{a,b}]=1;
-    }
-  }
-  rep(i,N)  cout << mp[{find(par1,i),find(par2,i)}] << " ";
-  cout << endl;
+  u.unite(1,3);
+  u.unite(0,3);
+  cout << (u.same(0,1) ? "yes": "no") << endl;
   return 0;
 }

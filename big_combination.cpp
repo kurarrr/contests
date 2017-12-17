@@ -18,10 +18,22 @@
 #define pb push_back
 
 using namespace std;
-
+ 
 typedef long long ll;
-const int mod=1e9+7;
-const int INF=1<<30;
+typedef pair<int,int> P;
+const int mod=1e9+7,INF=1<<30;
+const double EPS=1e-12,PI=3.1415926535897932384626;
+const int MAX_N=13;
+const ll LINF=100000000000000000;
+vector<ll> fact;
+
+ll D,L;
+
+void init(ll N){
+  fact.resize(N+1);
+  fact[0]=1;
+  rep(i,N)  fact[i+1]=((i+1)*fact[i])%mod;
+}
 
 ll pow(ll a,ll b){
   // aのb乗を求める
@@ -40,24 +52,36 @@ ll imod(ll n){
   return pow(n,P-2);
 }
 
-ll comb_mod(ll n,ll k,ll fact[]){
+ll comb_mod(ll n,ll k){
   //nまで埋めた階乗テーブルを渡す
   return (fact[n] * imod(fact[k]) % mod) * imod(fact[n-k]) % mod ;
   //nCk % mod を返す
 }
 
-int main(){
-  int H,W,A,B;
-  cin >> H >> W >> A >> B ;
-  ll fact[H+W+1];
-  fact[0]=1;
-  rep(i,H+W)  fact[i+1]=((i+1)*fact[i])%mod;
-  
-  ll ans=0;
-  for(ll x=0; x<W-B; x++){
-    ans=(ans+(comb_mod(H-A+B-1+x,H-A-1,fact) * comb_mod(W+A-B-2-x,A-1,fact) % mod))%mod;
-  }
-  cout << ans << endl;
+ll calc(ll x,ll y,ll k){
+  if(x*y<D+L) return 0;
+  ll res= (comb_mod(x*y,D)*comb_mod(x*y-D,L))*k%mod;
+  //cout << x << "," << y << ":" << res << endl;
+  return res;
+}
 
+int main(){
+  ll R,C,X,Y;
+  cin >> R >> C >> X >> Y >> D >> L ;
+  init(X*Y);
+  if(D+L==X*Y){
+    cout << ((R-X+1)*(C-Y+1)%mod)*comb_mod(X*Y,D)%mod << endl;
+  }else{
+    ll res=0;
+    res+=calc(X,Y,1);
+    res-=(calc(X-1,Y,2)+calc(X,Y-1,2));
+    res+=(calc(X-1,Y-1,4)+calc(X-2,Y,1)+calc(X,Y-2,1));
+    res-=(calc(X-1,Y-2,2)+calc(X-2,Y-1,2));
+    res+=calc(X-2,Y-2,1);
+    res*=((R-X+1)*(C-Y+1));
+    while(res<0) res+=mod;
+    res %= mod;
+    cout << res << endl;
+  }
   return 0;
 }
