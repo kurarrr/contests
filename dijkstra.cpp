@@ -1,76 +1,90 @@
-#include<iostream>
-#include<string>
-#include<vector>
-#include<map>
-#include<list>
-#include<queue>
-#include<deque>
-#include<stack>
-#include<algorithm>
-#include<utility>
-#include<memory>
- 
+#include "bits/stdc++.h"
+
 #define ALL(g) (g).begin(),(g).end()
 #define REP(i, x, n) for(int i = x; i < n; i++)
 #define rep(i,n) REP(i,0,n)
-#define EXIST(s,e) ((s).find(e)!=(s).end())
+#define RREP(i, x, n) for(int i = x; i >= n; i--)
+#define rrep(i, n) RREP(i,n,0)
 #define pb push_back
- 
+
 using namespace std;
 
-typedef long long ll;
-typedef pair<ll,int> P;//toまでの最短距離,to
+using ll = long long;
+using P = pair<int,int>;
+using Pl = pair<ll,int>;
 
-const int mod=1e9+7;
-const int INF=1<<30;
+const int mod=1e9+7,INF=1<<30;
+const double EPS=1e-12,PI=3.1415926535897932384626;
+const ll LINF=1LL<<60, lmod = 1e9+7;
+const int MAX_N = 100005;
 
-struct edge{ll cost;int to;};
-vector<edge> e1[100001],e2[100001];
-ll d1[100001],d2[100001];
+template<typename T> T inf;
+template<> constexpr int inf<int> = 1<<30;
+template<> constexpr ll inf<ll> = 1LL<<60;
 
-void dijkstra(vector<edge> graph[],ll d[]){
-  priority_queue<P,vector<P>,greater<P>> que;
-  fill(d,d+100000,INF);
-  d[0]=0;
-  que.push(P(0,0));
+using Cost = ll;
+using Node = int;
+struct Edge{
+  Cost cost; Node to;
+  Edge(Cost cost,Node to)
+    :cost(cost),to(to){}
+};
+using Graph = vector<vector<Edge>>;
+
+vector<Cost> dijkstra
+(Graph &graph, Node start, ll pat[], Cost zero = 0LL)
+{
+  using Pcn = pair<Cost,Node>;
+  priority_queue<Pcn,vector<Pcn>,greater<Pcn>> que;
+  vector<Cost> dist(graph.size(),inf<Cost>);
+  dist[start] = zero;
+  pat[start] = 1LL;
+  que.push(Pcn(zero,start));
   while(!que.empty()){
-    P p=que.top(); que.pop();
-    int v=p.second; //行き先
-    if(d[v]<p.first)  continue;
-    rep(i,graph[v].size()){
-      edge e=graph[v][i];
-      if(d[v]+e.cost<d[e.to]){
-        d[e.to]=d[v]+e.cost;
-        que.push(P(d[e.to],e.to));
+    Pcn p = que.top(); que.pop();
+    Node v = p.second; //行き先
+    if(dist[v] < p.first)  continue;
+    for(Edge e : graph[v]){
+      if(dist[v]+e.cost < dist[e.to]){
+        dist[e.to] = dist[v]+e.cost;
+        // 最小値を更新したら今までのパターンを消す
+        pat[e.to] = 0LL;
+        que.push(Pcn(dist[e.to],e.to));
+      }
+      if(dist[v]+e.cost == dist[e.to]){
+        // 最小値を見つけたらパターンを足す
+        (pat[e.to] += pat[v]) %= lmod;
       }
     }
   }
-  return ;
+  return dist;
 }
 
+Graph graph;
+ll patS[MAX_N],patT[MAX_N];
+
 int main(){
-  int N,M;
-  ll T;
-  cin >> N >> M >> T ;
-  ll A[N];
-  rep(i,N) cin >> A[i] ;
-  int a,b;
-  ll c;
+  int N,M; scanf("%d%d",&N,&M);
+  graph.resize(N);
+  int S,T; scanf("%d%d",&S,&T); S--; T--;
   rep(i,M){
-    edge e,re;
-    cin >> a >> b >> c;
-    a--; b--;
-    e.cost=re.cost=c;
-    e.to=b; re.to=a;
-    e1[a].pb(e); e2[b].pb(re);
+    int l,r; ll dd; scanf("%d%d%lld",&l,&r,&dd);
+    l--; r--; graph[l].pb(Edge(dd,r)); graph[r].pb(Edge(dd,l));
   }
-  dijkstra(e1,d1);
-  dijkstra(e2,d2);
-  
-  ll ans=0;
+  auto distS = move(dijkstra(graph,S,patS));
+  auto distT = move(dijkstra(graph,T,patT));
+  ll ans = patS[T] * patS[T] % lmod;
+  ll len = distS[T];
   rep(i,N){
-    if(T<d1[i]+d2[i]) continue;
-    ans=max(ans,(T-d1[i]-d2[i])*A[i]);
+    if(distS[i]+distT[i]==len && distS[i]*2LL==len){
+      (ans += (lmod - patS[i]*patS[i]%lmod*patT[i]%lmod*patT[i]%lmod)) %= lmod;
+    }
+  }
+  rep(i,N) for(auto e:graph[i]){
+    int j = e.to; ll c = e.cost;
+    if(distS[i]+c+distT[j]==len && distS[i]*2LL<len && distT[j]*2LL<len){
+      (ans += (lmod - patS[i]*patS[i]%lmod*patT[j]%lmod*patT[j]%lmod)) %= lmod;
+    }
   }
   cout << ans << endl;
   return 0;
