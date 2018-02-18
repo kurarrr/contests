@@ -11,19 +11,21 @@ using namespace std;
 
 using ll = long long;
 using P = pair<int,int>;
-using Pl = pair<ll,int>;
+using Pl = pair<ll,ll>;
+using vi = vector<int>;
+using vvi = vector<vi>;
 
 const int mod=1e9+7,INF=1<<30;
 const double EPS=1e-12,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<60;
-const int MAX_N = 1003;
+const int MAX_N = 51;
 
 template<typename T> T inf;
 template<> constexpr int inf<int> = 1<<30;
 template<> constexpr ll inf<ll> = 1LL<<60;
 template<> constexpr double inf<double> = 1e30;
 
-using Cost = double;
+using Cost = int;
 using Node = int;
 struct Edge{
   Cost cost; Node to;
@@ -54,27 +56,31 @@ vector<Cost> dijkstra
   return dist;
 }
 
-Graph graph;
-
-double x[MAX_N],y[MAX_N],r[MAX_N];
+string s[MAX_N];
 
 int main(){
-  double x1,y1,x2,y2;
-  cin >> x1 >> y1 >> x2 >> y2;
-  int N; cin >> N;
-  x[0] = x1; y[0] = y1; r[0] = 0;
-  x[N+1] = x2; y[N+1] = y2; r[N+1] = 0;
-  rep(i,N){
-    scanf("%lf%lf%lf",x+i+1,y+i+1,r+i+1);
+  int H,W; cin >> H >> W;
+  rep(i,H) cin >> s[i];
+  int N = H*W;
+  Graph graph(N);
+  int cnt = -1;
+  rep(i,H) rep(j,W){
+    if(s[i][j]=='.') cnt++;
+    else continue;
+    for(int k = -1; k <= 1;k += 2) if(i+k>=0 && i+k<H) if(s[i+k][j]=='.'){
+      graph[W*i+j].pb(Edge(1,W*(i+k)+j));
+      // cout << W*i+j << " to " << W*(i+k)+j << endl;
+    }
+    for(int k = -1; k <= 1;k += 2) if(j+k>=0 && j+k<W) if(s[i][j+k]=='.'){
+      graph[W*i+j].pb(Edge(1,W*i+j+k));
+      // cout << W*i+j << " to " << W*(i)+j+k << endl;
+    }
   }
-  graph.resize(N+2);
-  rep(i,N+1) REP(j,i+1,N+2){
-    double c = max(0.0,hypot(x[i]-x[j],y[i]-y[j])-(r[i]+r[j]));
-    graph[i].pb(Edge(c,j));
-    graph[j].pb(Edge(c,i));
+  auto dist = move(dijkstra(graph,0));
+  rep(i,H) rep(j,W){
+    // cout << i << " " << j << " -> " << graph[W*i+j].size() << endl;
   }
-  vector<Cost> dist;
-  dist = move(dijkstra(graph,0));
-  printf("%.10lf\n",dist[N+1]);
+  if(dist[N-1]==inf<int>) cout << "-1" << endl;
+  else cout << cnt - dist[N-1] << endl;
   return 0;
 }

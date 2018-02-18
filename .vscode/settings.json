@@ -51,6 +51,7 @@
       "shared_mutex": "cpp",
       "sstream": "cpp",
       "streambuf": "cpp",
-      "thread": "cpp"
+      "thread": "cpp",
+      "complex": "cpp"
     }
   }
