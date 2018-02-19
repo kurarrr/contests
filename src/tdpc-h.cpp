@@ -57,8 +57,6 @@ int main(){
     // }
     // cout << "" << endl;
   }
-  int ans = -INF;
-  rep(i,C+1) rep(j,W+1) chmax(ans,dp[i][j]);
-  cout << ans << endl;
+  cout << dp[C][W] << endl;
   return 0;
 }
