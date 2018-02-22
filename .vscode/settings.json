@@ -52,6 +52,7 @@
       "sstream": "cpp",
       "streambuf": "cpp",
       "thread": "cpp",
-      "complex": "cpp"
+      "complex": "cpp",
+      "*.main": "cpp"
     }
   }
