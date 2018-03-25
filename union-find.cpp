@@ -26,30 +26,30 @@ const int INF=1<<30;
 const int MAX_N=100001;
 
 struct UnionFindTree{
-  int par[MAX_N],rank[MAX_N],size[MAX_N];
+  vector<int> par,rank,size;
   UnionFindTree(int N){
-    fill(rank,rank+N,0);
-    fill(size,size+N,1);
-    rep(i,N) par[i]=i;
+    par = rank = vector<int>(N,0);
+    size = vector<int>(N,1);
+    for(int i = 0; i < N; i++) par[i] = i;
   }
   int find(int x){
-    if(par[x]==x) return x;
-    else  return par[x]=find(par[x]);
+    if(par[x] == x) return x;
+    else return par[x] = find(par[x]);
   }
   void unite(int x,int y){
-    x=find(x);
-    y=find(y);
-    if(x==y)  return ;
-    if(rank[x]<rank[y]){
-      par[x]=y;
+    x = find(x);
+    y = find(y);
+    if(x == y)  return ;
+    if(rank[x] < rank[y]){
+      par[x] = y;
     }else{
-      par[y]=x;
-      if(rank[x]==rank[y])  ++rank[x];
+      par[y] = x;
+      if(rank[x] == rank[y]) ++rank[x];
     }
-    size[x]=size[y]=size[x]+size[y];
+    size[x] = size[y] = size[x] + size[y];
   }
   bool same(int x,int y){
-    return find(x)==find(y);
+    return find(x) == find(y);
   }
 };
 
@@ -59,5 +59,6 @@ int main(){
   u.unite(1,3);
   u.unite(0,3);
   cout << (u.same(0,1) ? "yes": "no") << endl;
+  cout << (u.same(0,2) ? "yes": "no") << endl;
   return 0;
 }
