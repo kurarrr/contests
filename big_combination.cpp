@@ -26,7 +26,6 @@ const double EPS=1e-12,PI=3.1415926535897932384626;
 const int MAX_N=13;
 const ll LINF=100000000000000000;
 
-ll D,L;
 vector<ll> fact;
 
 void init(ll N){
@@ -54,34 +53,11 @@ ll imod(ll n){
 
 ll comb_mod(ll n,ll k){
   //nまで埋めた階乗テーブルを渡す
-  return (fact[n] * imod(fact[k]) % mod) * imod(fact[n-k]) % mod ;
+  if(k>n) return 0LL;
+  else return (fact[n] * imod(fact[k]) % mod) * imod(fact[n-k]) % mod ;
   //nCk % mod を返す
 }
 
-ll calc(ll x,ll y,ll k){
-  if(x*y<D+L) return 0;
-  ll res= (comb_mod(x*y,D)*comb_mod(x*y-D,L))*k%mod;
-  //cout << x << "," << y << ":" << res << endl;
-  return res;
-}
-
 int main(){
-  ll R,C,X,Y;
-  cin >> R >> C >> X >> Y >> D >> L ;
-  init(X*Y);
-  if(D+L==X*Y){
-    cout << ((R-X+1)*(C-Y+1)%mod)*comb_mod(X*Y,D)%mod << endl;
-  }else{
-    ll res=0;
-    res+=calc(X,Y,1);
-    res-=(calc(X-1,Y,2)+calc(X,Y-1,2));
-    res+=(calc(X-1,Y-1,4)+calc(X-2,Y,1)+calc(X,Y-2,1));
-    res-=(calc(X-1,Y-2,2)+calc(X-2,Y-1,2));
-    res+=calc(X-2,Y-2,1);
-    res*=((R-X+1)*(C-Y+1));
-    while(res<0) res+=mod;
-    res %= mod;
-    cout << res << endl;
-  }
   return 0;
 }
