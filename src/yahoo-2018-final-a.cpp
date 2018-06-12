@@ -46,8 +46,9 @@ int main(){
   int N,M; cin >> N >> M;
   vi a(N); rep(i,N) cin >> a[i];
   int limit = max(M, *max_element(ALL(a))) + 1;
-  vector<vector<int> > prime_factors(limit);
+  vector<vector<int>> prime_factors(limit);
   REP(p,2,limit) if (prime_factors[p].empty()) {
+    // 素数ならば,その数の倍数にその数を含める
     for (int x = p; x < limit; x += p) {
       prime_factors[x].push_back(p);
     }
