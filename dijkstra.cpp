@@ -15,14 +15,15 @@ using Pl = pair<ll,int>;
 
 const int mod=1e9+7,INF=1<<30;
 const double EPS=1e-12,PI=3.1415926535897932384626;
-const ll LINF=1LL<<60, lmod = 1e9+7;
-const int MAX_N = 100005;
+const ll lmod = 1e9+7,LINF=1LL<<60;
+const int MAX_N = 1003;
 
 template<typename T> T inf;
 template<> constexpr int inf<int> = 1<<30;
 template<> constexpr ll inf<ll> = 1LL<<60;
+template<> constexpr double inf<double> = 1e30;
 
-using Cost = ll;
+using Cost = double;
 using Node = int;
 struct Edge{
   Cost cost; Node to;
@@ -32,13 +33,12 @@ struct Edge{
 using Graph = vector<vector<Edge>>;
 
 vector<Cost> dijkstra
-(Graph &graph, Node start, ll pat[], Cost zero = 0LL)
+(Graph &graph, Node start, Cost zero = 0LL)
 {
   using Pcn = pair<Cost,Node>;
   priority_queue<Pcn,vector<Pcn>,greater<Pcn>> que;
   vector<Cost> dist(graph.size(),inf<Cost>);
   dist[start] = zero;
-  pat[start] = 1LL;
   que.push(Pcn(zero,start));
   while(!que.empty()){
     Pcn p = que.top(); que.pop();
@@ -47,13 +47,7 @@ vector<Cost> dijkstra
     for(Edge e : graph[v]){
       if(dist[v]+e.cost < dist[e.to]){
         dist[e.to] = dist[v]+e.cost;
-        // 最小値を更新したら今までのパターンを消す
-        pat[e.to] = 0LL;
         que.push(Pcn(dist[e.to],e.to));
-      }
-      if(dist[v]+e.cost == dist[e.to]){
-        // 最小値を見つけたらパターンを足す
-        (pat[e.to] += pat[v]) %= lmod;
       }
     }
   }
@@ -61,31 +55,26 @@ vector<Cost> dijkstra
 }
 
 Graph graph;
-ll patS[MAX_N],patT[MAX_N];
+
+double x[MAX_N],y[MAX_N],r[MAX_N];
 
 int main(){
-  int N,M; scanf("%d%d",&N,&M);
-  graph.resize(N);
-  int S,T; scanf("%d%d",&S,&T); S--; T--;
-  rep(i,M){
-    int l,r; ll dd; scanf("%d%d%lld",&l,&r,&dd);
-    l--; r--; graph[l].pb(Edge(dd,r)); graph[r].pb(Edge(dd,l));
-  }
-  auto distS = move(dijkstra(graph,S,patS));
-  auto distT = move(dijkstra(graph,T,patT));
-  ll ans = patS[T] * patS[T] % lmod;
-  ll len = distS[T];
+  double x1,y1,x2,y2;
+  cin >> x1 >> y1 >> x2 >> y2;
+  int N; cin >> N;
+  x[0] = x1; y[0] = y1; r[0] = 0;
+  x[N+1] = x2; y[N+1] = y2; r[N+1] = 0;
   rep(i,N){
-    if(distS[i]+distT[i]==len && distS[i]*2LL==len){
-      (ans += (lmod - patS[i]*patS[i]%lmod*patT[i]%lmod*patT[i]%lmod)) %= lmod;
-    }
+    scanf("%lf%lf%lf",x+i+1,y+i+1,r+i+1);
   }
-  rep(i,N) for(auto e:graph[i]){
-    int j = e.to; ll c = e.cost;
-    if(distS[i]+c+distT[j]==len && distS[i]*2LL<len && distT[j]*2LL<len){
-      (ans += (lmod - patS[i]*patS[i]%lmod*patT[j]%lmod*patT[j]%lmod)) %= lmod;
-    }
+  graph.resize(N+2);
+  rep(i,N+1) REP(j,i+1,N+2){
+    double c = max(0.0,hypot(x[i]-x[j],y[i]-y[j])-(r[i]+r[j]));
+    graph[i].pb(Edge(c,j));
+    graph[j].pb(Edge(c,i));
   }
-  cout << ans << endl;
+  vector<Cost> dist;
+  dist = move(dijkstra(graph,0));
+  printf("%.10lf\n",dist[N+1]);
   return 0;
 }
