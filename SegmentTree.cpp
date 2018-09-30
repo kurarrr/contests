@@ -56,11 +56,12 @@ template <class Monoid> class SegmentTree{
       dat[i+=N-1] = val;
       while(i>0){
         i=(i-1)/2;
-        dat[i]=min(dat[2*i+1],dat[2*i+2]);
+        dat[i]=Monoid::op(dat[2*i+1],dat[2*i+2]);
       }
       return;
     }
-    T query(int a,int b){return query(a,b,0,0,N);}
+    T query(int a,int b){ // op[a,b]
+      return query(a,b,0,0,N);}
     T query(int a,int b,int k,int l,int r){
       assert(0<=l && l<=r && r<2*N);
       if(r<=a || b<=l) return Monoid::id();
