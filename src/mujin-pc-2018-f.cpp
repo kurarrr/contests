@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// #define DEBUG_IS_VALID
+#define DEBUG_IS_VALID
 
 #ifdef DEBUG_IS_VALID
 #define DEB 1 
@@ -26,8 +26,8 @@ template<typename T1,typename T2>ostream& operator << (ostream& os, map<T1,T2> m
 
 void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
-template<class T> inline void chmax(T& a,T const& b){a=max(a,b);}
-template<class T> inline void chmin(T& a,T const& b){a=min(a,b);}
+template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
+template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
 
 using ll = long long;
 using P = pair<int,int>;
@@ -40,6 +40,7 @@ using vvl = vector<vl>;
 const int mod=1e9+7,INF=1<<29;
 const double EPS=1e-12,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<59; 
+
 
 template<int MOD> struct ModInt {
     static const int Mod = MOD; unsigned x; ModInt() : x(0) { }
@@ -71,23 +72,29 @@ template<typename T, int FAC_MAX> struct Comb { vector<T> fac, ifac;
     T aCb(int a, int b) { if (b < 0 || a < b) return T(0); return fac[a] * ifac[a - b] * ifac[b]; }
     T nHk(int n, int k) { if (n == 0 && k == 0) return T(1); if (n <= 0 || k < 0) return 0;
         return aCb(n + k - 1, k); }}; // nHk = (n+k-1)Ck : n is separator
-typedef ModInt<1000000007> mint;
-map<int, int> enumpr(int n) {
-    map<int, int> V;
-    for (int i = 2; 1LL * i*i <= n; i++) while (n%i == 0) V[i]++, n /= i;
-    if (n>1) V[n]++;
-    return V;
-}
-
-Comb<mint, int(2e5)> com;
+typedef ModInt<998244353> mint;
 
 int main(){
   cin.tie(0);
   ios::sync_with_stdio(false);
-  ll N,M; cin >> N >> M ;
-  auto ep = enumpr(M);
-  mint ans = 1;
-  for(auto p : ep) ans *= com.nHk(N, p.second);
-  cout << ans << endl;
+  int N; cin >> N ;
+  vi c(N+1);
+  rep(i,N){
+    int a; cin >> a; c[a]++;
+  }
+  using vmi = vector<mint>;
+  vmi fact(N+1);
+  fact[0] = mint(1);
+  rep(i,N) fact[i+1] = mint(i+1) * fact[i];
+  vector<vmi> dp(N+2,vmi(N+1));
+  dp[N+1][0] = 1;
+  RREP(i,N,1) rep(j,N+1){
+    int num = j+c[i];
+    rep(k,num/i+1){
+      dp[i][num-k*i] += dp[i+1][j] * fact[num]
+                     / (fact[num-k*i] * ((fact[i])^k) * fact[k] );
+    }
+  }
+  cout << dp[1][0] << endl;
   return 0;
 }
