@@ -41,31 +41,31 @@ const int mod=1e9+7,INF=1<<29;
 const double EPS=1e-12,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<59; 
 
-void GaussElimination(vl &x){
-  int N = x.size();
-  int axis = 0;
-  rep(b,60){
-    int temp = -1;
-    for(temp=axis;temp<N;temp++) if(((x[temp]>>b)&1)) break;
-    if(!(0 <= temp && temp < N)) continue;
-    swap(x[axis],x[temp]);
-    rep(i,N) if((i!=axis)&&(((x[i]>>b)&1)==1)) x[i] ^= x[axis];
-    axis++;
-  }
-}
-
 int main(){
   cin.tie(0);
   ios::sync_with_stdio(false);
-  int N; cin >> N ;
-  vl a(N),b(N);
-  rep(i,N) cin >> a[i] ;
-  rep(i,N) cin >> b[i] ;
-  GaussElimination(a);
-  GaussElimination(b);
-  dump(a);
-  dump(b);
-  if(a==b) cout << "Yes" << endl;
-  else cout << "No" << endl;
+  int T; cin >> T ;
+  rep(i,T){
+    ll A,B,C,D; cin >> A >> B >> C >> D ;
+    ll g = __gcd(B,D);
+    if(B>D) cout << "No" << endl;
+    else if(A<C){
+      if(A<B) cout << "No" << endl;
+      else{
+        A += ((-A+D-1)/(D-B))*(D-B);
+        ll k = (A-C-1)/g;
+        A -= k * g;
+        dump(A);
+        if(A-B>=0) cout << "Yes" << endl;
+        else cout << "No" << endl;
+      }
+    }else{
+      ll k = (A-C-1)/g;
+      A -= k * g;
+      dump(A);
+      if(A-B>=0) cout << "Yes" << endl;
+      else cout << "No" << endl;
+    }
+  }
   return 0;
 }
