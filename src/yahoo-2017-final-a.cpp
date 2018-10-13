@@ -58,9 +58,9 @@ int main(){
         }else{
           chmin(dp[i+1][j],dp[i][(j-k+5)%5]+(k+4)%5+1);
         }
-        // del
-        chmin(dp[i+1][j],dp[i][j]+1);
       }
+      // del
+      chmin(dp[i+1][j],dp[i][j]+1);
     }
   }
   dump(dp);
