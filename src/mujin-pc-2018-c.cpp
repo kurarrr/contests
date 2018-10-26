@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define DEBUG_IS_VALID
+// #define DEBUG_IS_VALID
 
 #ifdef DEBUG_IS_VALID
 #define DEB 1 
@@ -41,22 +41,37 @@ const int mod=1e9+7,INF=1<<29;
 const double EPS=1e-12,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<59; 
 
-
 int main(){
   cin.tie(0);
   ios::sync_with_stdio(false);
-  int N; cin >> N ;
-  const int lim = 55555;
-  vi prime;
-  {
-    vector<bool> is_prime(lim+1,true);
-    is_prime[0] = is_prime[1] = false;
-    for(int i = 2;i*i<=lim;i++){
-      if(!is_prime[i]) continue;
-      for(int j = 2; i*j <= lim; j++) is_prime[i*j] = false;
-    }
-    for(int i = 1;i <= lim; i++) if(is_prime[i]) prime.pb(i);
+  int N,M; cin >> N >> M ;
+  vector<string> s(N+2);
+  s[0] = s[N+1] = string(M+2,'#');
+  rep(i,N){
+    cin >> s[i+1] ;
+    s[i+1] = "#"+s[i+1]+"#";
   }
-  dump(prime);
+  ll ans = 0;
+  auto rotate = [&](){
+    vector<string> nxt(M+2,string(N+2,'.'));
+    rep(i,N+2) rep(j,M+2) nxt[M+1-j][i] = s[i][j];
+    swap(s,nxt);
+    swap(N,M);
+  };
+  rep(k,4){
+    vvl a(N+2,vl(M+2)),asum(N+2,vl(M+2,-1));
+    rep(i,N+2) rep(j,M+2){
+      if(s[i][j]!='.') a[i][j] = -1;
+      else a[i][j] = a[i][j-1] + 1;
+    }
+    rep(i,N+1) rep(j,M+2){
+      if(s[i][j]!='.') asum[i+1][j] = 0;
+      else asum[i+1][j] = asum[i][j] + a[i][j];
+    }
+    REP(i,1,N+1) REP(j,1,M+1) if(s[i][j]=='.') ans += asum[i][j];
+    dump(ans);
+    rotate();
+  }
+  cout << ans << endl;
   return 0;
 }

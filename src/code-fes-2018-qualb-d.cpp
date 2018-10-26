@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define DEBUG_IS_VALID
+// #define DEBUG_IS_VALID
 
 #ifdef DEBUG_IS_VALID
 #define DEB 1 
@@ -41,22 +41,57 @@ const int mod=1e9+7,INF=1<<29;
 const double EPS=1e-12,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<59; 
 
-
 int main(){
   cin.tie(0);
   ios::sync_with_stdio(false);
-  int N; cin >> N ;
-  const int lim = 55555;
-  vi prime;
-  {
-    vector<bool> is_prime(lim+1,true);
-    is_prime[0] = is_prime[1] = false;
-    for(int i = 2;i*i<=lim;i++){
-      if(!is_prime[i]) continue;
-      for(int j = 2; i*j <= lim; j++) is_prime[i*j] = false;
-    }
-    for(int i = 1;i <= lim; i++) if(is_prime[i]) prime.pb(i);
+  using ld = long double;
+  int N,M; ll q; cin >> N >> M >> q ;
+  vl x(M),p(M); rep(i,M) cin >> x[i] >> p[i] ;
+  using vd = vector<ld>;
+  vector<vd> u(N+1,vd(M+1));
+  vd r(M+1);
+  vd fact(N+1);
+  fact[0] = 1.0;
+  // vector<vd> comb(N+1,vd(N+1));
+  // comb[1][0] = comb[1][1] = 1;
+  // REP(i,1,N+1) comb[i][0] = 1;
+  // REP(i,1,N) rep(j,i+1) comb[i+1][j+1] = comb[i][j] + comb[i][j+1];
+  ll ss = 0;
+  rep(i,M){
+    ss += p[i];
+    r[i+1] = ld(ss)/ld(q);
   }
-  dump(prime);
+  vector<vd> v(N+1,vd(M+1));
+  rep(i,N+1) v[i][0] = 0;
+  REP(j,1,M+1) v[0][j] = 1.0;
+  rep(i,N) REP(j,1,M+1) v[i+1][j] = v[i][j]*r[j]*ld(N-i)/ld(i+1);
+  dump(v);
+  
+  rep(i,N){
+    u[i+1][0] = 1.0;
+    REP(j,1,M){
+      u[i+1][j] = u[i][j] + pow(r[M]-r[j],N-i)*v[i][j];
+      // u[i+1][j] = u[i][j] + pow(r[j],i)*pow(r[M]-r[j],N-i)*comb[N][i];
+    }
+  }
+  dump(u);
+  vector<vd> t(N+1,vd(M));
+  REP(i,1,N+1) rep(j,M) t[i][j] = u[i][j]-u[i][j+1];
+  dump(t);
+  ld ans = 0.0;
+  REP(i,1,N+1){
+    ld temp = 0;
+    ld y;
+    rep(j,M){
+      temp += t[i][j];
+      if(temp>0.5){
+        y = x[j];
+        break;
+      }
+    }
+    dump(y);
+    rep(j,M) ans += t[i][j] * abs(y-x[j]);
+  }
+  printf("%.8Lf\n",ans);
   return 0;
 }
