@@ -60,7 +60,7 @@ template <class Monoid> class SegmentTree{
       }
       return;
     }
-    T query(int a,int b){ // op[a,b]
+    T query(int a,int b){ // op[a,b)
       return query(a,b,0,0,N);}
     T query(int a,int b,int k,int l,int r){
       assert(0<=l && l<=r && r<2*N);
