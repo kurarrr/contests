@@ -6,24 +6,59 @@
 #define RREP(i, x, n) for(int i = x; i >= n; i--)
 #define rrep(i, n) RREP(i,n,0)
 #define pb push_back
+#pragma GCC optimize ("-O3")
 
 using namespace std;
 
+#define DEBUG_IS_VALID
+
+#ifdef DEBUG_IS_VALID
+#define DEB 1 
+#else
+#define DEB 0
+#endif
+#define DUMPOUT cout
+#define dump(...) if(DEB) DUMPOUT<<"  "<<#__VA_ARGS__<<" :["<<__LINE__<<":"<<__FUNCTION__<<"]"<<endl<<"    "; if(DEB) dump_func(__VA_ARGS__)
+template<typename T1,typename T2>ostream& operator << (ostream& os, pair<T1,T2> p){cout << "(" << p.first << ", " << p.second << ")"; return os;}
+template<typename T>ostream& operator << (ostream& os, vector<T>& vec) { os << "{"; for (int i = 0; i<vec.size(); i++) os << vec[i] << (i + 1 == vec.size() ? "" : ", "); os << "}"; return os; }
+template<typename T>ostream& operator << (ostream& os, set<T>& st){for(auto itr = st.begin(); itr != st.end(); itr++) cout << *itr << (next(itr)!=st.end() ? ", " : ""); cout << "}"; return os;}
+template<typename T1,typename T2>ostream& operator << (ostream& os, map<T1,T2> mp){cout << "{"; for(auto itr = mp.begin(); itr != mp.end(); itr++) cout << "(" << (itr->first) << ", " << (itr->second) << ")" << (next(itr)!=mp.end() ? "," : ""); cout << "}"; return os; }
+
+void dump_func(){DUMPOUT << endl;}
+template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
+template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
+template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
+
 using ll = long long;
 using P = pair<int,int>;
-using Pl = pair<ll,int>;
+using Pl = pair<ll,ll>;
+using vi = vector<int>;
+using vvi = vector<vi>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
 
-const int mod=1e9+7,INF=1<<30;
-const double EPS=1e-12,PI=3.1415926535897932384626;
-const ll lmod = 1e9+7,LINF=1LL<<60;
-const int MAX_N = 1003;
+namespace sub {
+  template <typename T>
+  constexpr typename std::enable_if<std::is_integral<T>::value, T>::type
+  inf_sub() {
+    return std::numeric_limits<T>::max() / 2 - 1000;
+  }
 
-template<typename T> T inf;
-template<> constexpr int inf<int> = 1<<30;
-template<> constexpr ll inf<ll> = 1LL<<60;
-template<> constexpr double inf<double> = 1e30;
+  template <typename T>
+  constexpr typename std::enable_if<std::is_floating_point<T>::value, T>::type
+  inf_sub() {
+    return std::min(std::numeric_limits<T>::max() / 2 - 1000, T(1e50));
+  }
+}  // namespace sub
 
-using Cost = double;
+/// @return Returns a large finite value representable by the numeric type T.
+/// @note It is guaranteed that the return values is strictly less than std::numeric_limits<T>::max() / 2.
+template <typename T> constexpr T inf() {
+  static_assert(std::is_arithmetic<T>::value, "T must be arithmetic value");
+  return sub::inf_sub<T>();
+}
+
+using Cost = ll;
 using Node = int;
 struct Edge{
   Cost cost; Node to;
@@ -37,7 +72,7 @@ vector<Cost> dijkstra
 {
   using Pcn = pair<Cost,Node>;
   priority_queue<Pcn,vector<Pcn>,greater<Pcn>> que;
-  vector<Cost> dist(graph.size(),inf<Cost>);
+  vector<Cost> dist(graph.size(),inf<Cost>());
   dist[start] = zero;
   que.push(Pcn(zero,start));
   while(!que.empty()){
@@ -54,27 +89,45 @@ vector<Cost> dijkstra
   return dist;
 }
 
-Graph graph;
-
-double x[MAX_N],y[MAX_N],r[MAX_N];
-
 int main(){
-  double x1,y1,x2,y2;
-  cin >> x1 >> y1 >> x2 >> y2;
-  int N; cin >> N;
-  x[0] = x1; y[0] = y1; r[0] = 0;
-  x[N+1] = x2; y[N+1] = y2; r[N+1] = 0;
+  int N,M; cin >> N >> M ;
+  vvi nd_list(N);
+  vi p(M),q(M),c(M);
+  rep(i,M){
+    int pp,qq,cc; cin >> pp >> qq >> cc ;
+    pp--; qq--;
+    nd_list[pp].pb(cc);
+    nd_list[qq].pb(cc);
+    p[i] = pp; q[i] = qq; c[i] = cc;
+  }
   rep(i,N){
-    scanf("%lf%lf%lf",x+i+1,y+i+1,r+i+1);
+    nd_list[i].pb(0);
+    sort(ALL(nd_list[i]));
+    nd_list[i].erase(unique(ALL(nd_list[i])),nd_list[i].end());
   }
-  graph.resize(N+2);
-  rep(i,N+1) REP(j,i+1,N+2){
-    double c = max(0.0,hypot(x[i]-x[j],y[i]-y[j])-(r[i]+r[j]));
-    graph[i].pb(Edge(c,j));
-    graph[j].pb(Edge(c,i));
+  vector<P> mp;
+  rep(i,N) rep(j,nd_list[i].size()) mp.pb(P(i,nd_list[i][j]));
+  map<P,int> rev_mp;
+  rep(i,mp.size()) rev_mp[mp[i]] = i;
+  int sz = mp.size();
+  Graph g(sz);
+  rep(i,N){
+    int u = rev_mp[P(i,0)];
+    for(auto color:nd_list[i]){
+      if(color==0) continue;
+      int v = rev_mp[P(i,color)];
+      g[u].pb(Edge(1,v));
+      g[v].pb(Edge(0,u));
+    }
   }
-  vector<Cost> dist;
-  dist = move(dijkstra(graph,0));
-  printf("%.10lf\n",dist[N+1]);
+  rep(i,M){
+    int u = rev_mp[P(p[i],c[i])];
+    int v = rev_mp[P(q[i],c[i])];
+    g[u].pb(Edge(0,v));
+    g[v].pb(Edge(0,u));
+  }
+  auto dist = move(dijkstra(g,rev_mp[P(0,0)]));
+  auto ans = dist[rev_mp[P(N-1,0)]];
+  cout << (ans!=inf<ll>() ? ans : -1) << endl;
   return 0;
 }
