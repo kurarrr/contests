@@ -72,9 +72,10 @@ template<typename T, int FAC_MAX> struct Comb { vector<T> fac, ifac;
     T nHk(int n, int k) { if (n == 0 && k == 0) return T(1); if (n <= 0 || k < 0) return 0;
         return aCb(n + k - 1, k); }}; // nHk = (n+k-1)Ck : n is separator
 typedef ModInt<1000000007> mint;
-map<int, int> enumpr(int n) {
-    map<int, int> V;
-    for (int i = 2; 1LL * i*i <= n; i++) while (n%i == 0) V[i]++, n /= i;
+
+map<ll, ll> enumpr(ll n) {
+    map<ll, ll> V;
+    for (ll i = 2; 1LL * i*i <= n; i++) while (n%i == 0) V[i]++, n /= i;
     if (n>1) V[n]++;
     return V;
 }
