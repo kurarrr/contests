@@ -42,21 +42,40 @@ const double EPS=1e-12,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<59; 
 
 
-int main(){
-  cin.tie(0);
-  ios::sync_with_stdio(false);
-  int N; cin >> N ;
-  const int lim = 55555;
-  vi prime;
-  {
-    vector<bool> is_prime(lim+1,true);
-    is_prime[0] = is_prime[1] = false;
-    for(int i = 2;i*i<=lim;i++){
-      if(!is_prime[i]) continue;
-      for(int j = 2; i*j <= lim; j++) is_prime[i*j] = false;
-    }
-    for(int i = 1;i <= lim; i++) if(is_prime[i]) prime.pb(i);
+vector<bool> is_prime(1e3+1,true);
+
+vector<ll> primes(ll n) {
+  is_prime[0] = is_prime[1] = false;
+  vector<ll> res;
+  for(ll i = 2; i <= n; i++){
+    if(!is_prime[i]) continue;
+    for(ll j = 2; j*i <= n; j++) is_prime[j*i] = false;
+    res.push_back(i);
   }
-  dump(prime);
-  return 0;
+  return res;
+}
+
+void _main() {
+  int t; cin >> t ;
+  auto p = primes(ll(1e3+1));
+  rep(i,t){
+    ll n; cin >> n ;
+    vl ans;
+    int sz = min(int(sqrt(double(n)))+1,int(p.size()));
+    rep(j,sz) REP(k,j,sz){
+      ll s = p[j];
+      ll t = p[k];
+      ll temp2 = n-ll(s*s)-ll(t*t);
+      ll temp = ll(sqrt(double(temp2)));
+      if(temp*temp!=temp2) continue;
+      if(!is_prime[temp]) continue;
+      if(!(s*s+t*t+temp*temp==n)) continue;
+      vl x = {s,t,temp};
+      sort(ALL(x));
+      ans.pb(x[0]*ll(1e6)+x[1]*ll(1e3)+x[2]);
+    }
+    sort(ALL(ans));
+    ans.erase(unique(ALL(ans)),ans.end());
+    cout << ans.size() << endl;
+  }
 }
