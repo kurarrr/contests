@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// #define DEBUG_IS_VALID
+#define DEBUG_IS_VALID
 
 #ifdef DEBUG_IS_VALID
 #define DEB 1 
@@ -21,13 +21,15 @@ using namespace std;
 #define dump(...) if(DEB) DUMPOUT<<"  "<<#__VA_ARGS__<<" :["<<__LINE__<<":"<<__FUNCTION__<<"]"<<endl<<"    "; if(DEB) dump_func(__VA_ARGS__)
 template<typename T1,typename T2>ostream& operator << (ostream& os, pair<T1,T2> p){cout << "(" << p.first << ", " << p.second << ")"; return os;}
 template<typename T>ostream& operator << (ostream& os, vector<T>& vec) { os << "{"; for (int i = 0; i<vec.size(); i++) os << vec[i] << (i + 1 == vec.size() ? "" : ", "); os << "}"; return os; }
-template<typename T>ostream& operator << (ostream& os, set<T>& st){for(auto itr = st.begin(); itr != st.end(); itr++) cout << *itr << (next(itr)!=st.end() ? ", " : ""); cout << "}"; return os;}
+template<typename T>ostream& operator << (ostream& os, set<T>& st){cout << "{"; for(auto itr = st.begin(); itr != st.end(); itr++) cout << *itr << (next(itr)!=st.end() ? ", " : ""); cout << "}"; return os;}
 template<typename T1,typename T2>ostream& operator << (ostream& os, map<T1,T2> mp){cout << "{"; for(auto itr = mp.begin(); itr != mp.end(); itr++) cout << "(" << (itr->first) << ", " << (itr->second) << ")" << (next(itr)!=mp.end() ? "," : ""); cout << "}"; return os; }
 
 void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
-template<class T> inline void chmax(T& a,T const& b){a=max(a,b);}
-template<class T> inline void chmin(T& a,T const& b){a=min(a,b);}
+template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
+template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
+void _main();
+int main(){ cin.tie(0); ios::sync_with_stdio(false); _main(); return 0;}
 
 using ll = long long;
 using P = pair<int,int>;
@@ -75,6 +77,7 @@ template<typename T, int FAC_MAX> struct Comb { vector<T> fac, ifac;
 using mint =  ModInt<int(1e9+7)>;
 using vm = vector<mint>;
 
+
 map<ll, ll> enumpr(ll n) {
     map<ll, ll> V;
     for (ll i = 2; 1LL * i*i <= n; i++) while (n%i == 0) V[i]++, n /= i;
@@ -82,15 +85,30 @@ map<ll, ll> enumpr(ll n) {
     return V;
 }
 
-Comb<mint, int(2e5)> com;
-
-int main(){
-  cin.tie(0);
-  ios::sync_with_stdio(false);
-  ll N,M; cin >> N >> M ;
-  auto ep = enumpr(M);
+void _main() {
+  ll N; int K;
+  cin >> N >> K ;
+  auto mp = enumpr(N);
+  auto solve = [&](ll num,ll cnt){
+    vector<vm> dp(K+1,vm(cnt+2));
+    dp[0][cnt] = 1;
+    rep(i,K){
+      rep(j,cnt+1){
+        mint d = mint(1)/mint(j+1);
+        dp[i+1][0] += d * dp[i][j];
+        dp[i+1][j+1] -= d * dp[i][j];
+      }
+      rep(j,cnt+1) dp[i+1][j+1] += dp[i+1][j];
+    }
+    mint res = 0;
+    mint temp = 1;
+    rep(j,cnt+1){
+      res += dp[K][j] * temp;
+      temp *= mint(num);
+    }
+    return res;
+  };
   mint ans = 1;
-  for(auto p : ep) ans *= com.nHk(N, p.second);
+  for(auto p:mp) ans *= solve(p.first,p.second);
   cout << ans << endl;
-  return 0;
 }
