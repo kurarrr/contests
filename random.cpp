@@ -32,8 +32,7 @@ int main(){
   vector<int> X,Y;
   REP(i,-5,6)
     REP(j,-5,6){X.pb(ll(x)+i); Y.pb(ll(y)+i);}
-  std::random_device seed_gen;
-  std::mt19937 engine(seed_gen());
+  std::mt19937 engine(chrono::steady_clock::now().time_since_epoch().count());
   rep(i,25){
     if((1000*X[i]==xx && 1000*Y[i]==yy)) continue;
     rep(j,int(1e6)){

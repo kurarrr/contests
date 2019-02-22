@@ -6,73 +6,124 @@
 #define RREP(i, x, n) for(int i = x; i >= n; i--)
 #define rrep(i, n) RREP(i,n,0)
 #define pb push_back
-#define show_table(n, k, table) rep(i,n){ rep(j,k) cout << table[i][j] << " "; cout << endl;}
+#pragma GCC optimize ("-O3")
 
 using namespace std;
 
-template<class T> inline void chmax(T& a,T const& b){a=max(a,b);}
-template<class T> inline void chmin(T& a,T const& b){a=min(a,b);}
+#define DEBUG_IS_VALID 
+
+#ifdef DEBUG_IS_VALID
+#define DEB 1 
+#else
+#define DEB 0
+#endif
+#define DUMPOUT cout
+#define dump(...) if(DEB) DUMPOUT<<"  "<<#__VA_ARGS__<<" :["<<__LINE__<<":"<<__FUNCTION__<<"]"<<endl<<"    "; if(DEB) dump_func(__VA_ARGS__)
+template<typename T1,typename T2>ostream& operator << (ostream& os, pair<T1,T2> p){cout << "(" << p.first << ", " << p.second << ")"; return os;}
+template<typename T>ostream& operator << (ostream& os, vector<T>& vec) { os << "{"; for (int i = 0; i<vec.size(); i++) os << vec[i] << (i + 1 == vec.size() ? "" : ", "); os << "}"; return os; }
+template<typename T>ostream& operator << (ostream& os, set<T>& st){cout << "{"; for(auto itr = st.begin(); itr != st.end(); itr++) cout << *itr << (next(itr)!=st.end() ? ", " : ""); cout << "}"; return os;}
+template<typename T1,typename T2>ostream& operator << (ostream& os, map<T1,T2> mp){cout << "{"; for(auto itr = mp.begin(); itr != mp.end(); itr++) cout << "(" << (itr->first) << ", " << (itr->second) << ")" << (next(itr)!=mp.end() ? "," : ""); cout << "}"; return os; }
+
+void dump_func(){DUMPOUT << endl;}
+template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
+template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
+template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
+void _main();
+int main(){ cin.tie(0); ios::sync_with_stdio(false); _main(); return 0;}
 
 using ll = long long;
 using P = pair<int,int>;
 using Pl = pair<ll,ll>;
 using vi = vector<int>;
 using vvi = vector<vi>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
 
-const int mod=1e9+7,INF=1<<30;
-const double EPS=1e-12,PI=3.1415926535897932384626;
-const ll lmod = 1e9+7,LINF=1LL<<60;
-const int MAX_N = 2003;
+const int mod=1e9+7,INF=1<<29;
+const double EPS=1e-5,PI=3.1415926535897932384626;
+const ll lmod = 1e9+7,LINF=1LL<<59; 
 
-struct Mat {
-  vector<vector<ll>> v;
-  Mat(int n):v(n,vector<ll>(n)){};
-  Mat(const vector<vector<ll>>& v):v(v){};
+template<int MOD> struct ModInt {
+  static const int Mod = MOD; unsigned x; ModInt() : x(0) { }
+  ModInt(signed sig) { x = sig < 0 ? sig % MOD + MOD : sig % MOD; }
+  ModInt(signed long long sig) { x = sig < 0 ? sig % MOD + MOD : sig % MOD; }
+  int get() const { return (int)x; }
+  ModInt &operator+=(ModInt that) { if ((x += that.x) >= MOD) x -= MOD; return *this; }
+  ModInt &operator-=(ModInt that) { if ((x += MOD - that.x) >= MOD) x -= MOD; return *this; }
+  ModInt &operator*=(ModInt that) { x = (unsigned long long)x * that.x % MOD; return *this; }
+  ModInt &operator/=(ModInt that) { return *this *= that.inverse(); }
+  ModInt operator+(ModInt that) const { return ModInt(*this) += that; }
+  ModInt operator-(ModInt that) const { return ModInt(*this) -= that; }
+  ModInt operator*(ModInt that) const { return ModInt(*this) *= that; }
+  ModInt operator/(ModInt that) const { return ModInt(*this) /= that; }
+  ModInt inverse() const { long long a = x, b = MOD, u = 1, v = 0;
+    while (b) { long long t = a / b; a -= t * b; std::swap(a, b); u -= t * v; std::swap(u, v); }
+    return ModInt(u); }
+  bool operator==(ModInt that) const { return x == that.x; }
+  bool operator!=(ModInt that) const { return x != that.x; }
+  ModInt operator-() const { ModInt t; t.x = x == 0 ? 0 : Mod - x; return t; }
 };
-Mat mulmat(Mat& a,Mat& b) {
-  int n = a.v.size();
-	ll mo2=4*lmod*lmod;
-	int x,y,z; Mat r(n);
-	rep(x,n) rep(y,n) r.v[x][y]=0;
-	rep(x,n) rep(z,n) rep(y,n) {
-		r.v[x][y] += a.v[x][z]*b.v[z][y];
-		if(r.v[x][y]>mo2) r.v[x][y] -= mo2;
+template<int MOD> ostream& operator<<(ostream& st, const ModInt<MOD> a) { st << a.get(); return st; };
+template<int MOD> ModInt<MOD> operator^(ModInt<MOD> a, unsigned long long k) {
+  ModInt<MOD> r = 1; while (k) { if (k & 1) r *= a; a *= a; k >>= 1; } return r; }
+template<typename T, int FAC_MAX> struct Comb { vector<T> fac, ifac;
+  Comb(){fac.resize(FAC_MAX,1);ifac.resize(FAC_MAX,1); for(int i = 1; i < FAC_MAX; i++)fac[i]=fac[i-1]*i;
+    ifac[FAC_MAX-1]=T(1)/fac[FAC_MAX-1];for(int i = FAC_MAX-2; i >= 1; i--)ifac[i]=ifac[i+1]*T(i+1);}
+  T aPb(int a, int b) { if (b < 0 || a < b) return T(0); return fac[a] * ifac[a - b]; }
+  T aCb(int a, int b) { if (b < 0 || a < b) return T(0); return fac[a] * ifac[a - b] * ifac[b]; }
+  T nHk(int n, int k) { if (n == 0 && k == 0) return T(1); if (n <= 0 || k < 0) return 0;
+    return aCb(n + k - 1, k); }}; // nHk = (n+k-1)Ck : n is separator
+
+using mint =  ModInt<int(1e9+7)>;
+using vm = vector<mint>;
+
+template <class ModIntType>
+struct Matrix {
+  vector<vector<long long>> dat;
+  Matrix(signed N):dat(N,vector<long long>(N)){};
+  Matrix(const vector<vector<long long>>& dat):dat(dat){};
+};
+template <class ModIntType>
+Matrix<ModIntType> operator*(Matrix<ModIntType>& a,Matrix<ModIntType>& b) {
+  int N = a.dat.size();
+  ll matmod = ModIntType::Mod;
+  ll mo2 = 4LL * matmod * matmod;
+	int x,y,z; Matrix<ModIntType> res(N);
+	rep(x,N) rep(z,N) rep(y,N) {
+		res.dat[x][y] += a.dat[x][z] * b.dat[z][y];
+    if(res.dat[x][y] > mo2) res.dat[x][y] -= mo2;
 	}
-	rep(x,n) rep(y,n) r.v[x][y]%=lmod;
-	return r;
+  rep(x,N) rep(y,N) res.dat[x][y] %= matmod;
+	return res;
 }
-
-Mat powmat(ll p,Mat a) {
-  int n = a.v.size();
-	int i,x,y; Mat r(n);
-	rep(x,n) rep(y,n) r.v[x][y]=0;
-	rep(i,n) r.v[i][i]=1;
-	while(p) {
-		if(p%2) r=mulmat(r,a);
-		a=mulmat(a,a);
-		p>>=1;
-	}
-	return r;
-}
-
-Mat A(8);
-
-int main(){
-  ll N; cin >> N;
-  A.v ={{1,1,1,0,0,0,0,1},
-        {1,1,1,1,1,0,0,1},
-        {1,1,1,1,1,1,0,1},
-        {0,1,1,1,1,0,0,1},
-        {0,1,1,1,1,1,0,1},
-        {0,0,1,0,1,1,0,1},
-        {1,1,1,1,1,1,1,0},
-        {0,0,0,0,0,0,0,1}};
-  auto An = powmat(N,A);
-  vector<ll> v = {0,0,0,0,0,0,0,1};
-  ll ans = 0LL;
-  rep(i,7) rep(j,8){
-    (ans += An.v[i][j] * v[j]) %= lmod;
+template<class ModIntType> Matrix<ModIntType> operator^(Matrix<ModIntType> a, signed long long k) {
+  assert(k>=0);
+  int N = a.dat.size();
+  Matrix<ModIntType> res(N);
+  for(int i = 0; i < N; i++) res.dat[i][i] = 1;
+  while (k) {
+    if (k & 1) res = a * res;
+    a = a * a;
+    k >>= 1;
   }
+  return res;
+}
+
+void _main(){
+  // int N; cin >> N ;
+  // int N,K; cin >> N >> K ;
+  // int a,b; cin >> a >> b ;
+  ll N,M; cin >> N >> M ;
+	if(N-M+1<0){
+		cout << "1" << endl;
+		return;
+	}
+  Matrix<mint> A(M);
+  A.dat[0][0] = 1;
+  A.dat[0][M-1] = 1;
+  rep(i,M-1) A.dat[i+1][i] = 1;
+  auto An = A^(N-M+1);
+  mint ans(0); 
+  rep(i,M) ans += An.dat[0][i];
   cout << ans << endl;
-  return 0;
 }
