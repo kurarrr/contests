@@ -37,23 +37,47 @@ const ll LINF=1LL<<60;
 const int MAX_N = 10004, MAX_C = 102;
 const ll lmod = 1e9+7;
 
-template <typename T>
-class FenwickTree {
+template <typename T> class FenwickTree {
   const int n;
-  vector<T> data;
+  std::vector<T> data;
+
 public:
-  FenwickTree(int n) : n(n), data(n, 0) {}
-  void add(int i, T value) {
-    for (; i < n; i |= i + 1) data[i] += value;
+  /// @brief
+  /// 長さ count の Fenwick Tree を作り，全ての要素を 0 で初期化する．
+  /// @complexity $O(n)$
+  FenwickTree(int count) : n(count), data(count, 0) { ; }
+
+  /// @brief
+  /// pos 番目の要素に値 value を加える．
+  /// @complexity $O(\\log(n))$
+  void add(int pos, const T &value) {
+    assert(0 <= pos && pos < n);
+    for (int i = pos; i < n; i |= i + 1) data[i] += value;
   }
-  T sum(int i) const {
-    // sum of [0,i]
+
+  /// @brief
+  /// 区間 [0, pos) 番目の範囲の和を求める．(pos = 0 のときは 0 を返す．)
+  /// @complexity $O(\\log(n))$
+  T sum(int pos) const {
+    assert(0 <= pos && pos <= n);
     T res = 0;
-    for (; i >= 0; i = (i & (i + 1)) - 1) res += data[i];
+    for (int i = pos - 1; i >= 0; i = (i & (i + 1)) - 1) {
+      res += data[i];
+    }
     return res;
   }
-  T sum(int l, int r) const { return sum(r - 1) - sum(l - 1); }
+
+  /// @brief
+  /// 区間 [l, r) 番目の範囲の和を求める．(l = r のときは 0 を返す．)
+  /// @complexity $O(\\log(n))$
+  T sum(int l, int r) const {
+    assert(0 <= l && l <= r && r <= n);
+    return sum(r) + (-sum(l));
+  }
+  using value_type = T;
+  using update_type = T;
 };
+
 
 int main(){
   FenwickTree<int> hoge(1000);
