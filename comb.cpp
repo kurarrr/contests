@@ -64,6 +64,7 @@ template<int MOD> struct ModInt {
 template<int MOD> ostream& operator<<(ostream& st, const ModInt<MOD> a) { st << a.get(); return st; };
 template<int MOD> ModInt<MOD> operator^(ModInt<MOD> a, unsigned long long k) {
     ModInt<MOD> r = 1; while (k) { if (k & 1) r *= a; a *= a; k >>= 1; } return r; }
+    // *より優先順位が高いため注意
 template<typename T, int FAC_MAX> struct Comb { vector<T> fac, ifac;
     Comb(){fac.resize(FAC_MAX,1);ifac.resize(FAC_MAX,1); for(int i = 1; i < FAC_MAX; i++)fac[i]=fac[i-1]*i;
         ifac[FAC_MAX-1]=T(1)/fac[FAC_MAX-1];for(int i = FAC_MAX-2; i >= 1; i--)ifac[i]=ifac[i+1]*T(i+1);}

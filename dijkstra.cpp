@@ -65,6 +65,9 @@ struct Edge{
   Edge(Cost cost,Node to)
     :cost(cost),to(to){}
 };
+ostream& operator << (ostream& os, Edge& e) {
+  cout << "(" << e.cost << "," << e.to << ") "; return os;
+}
 using Graph = vector<vector<Edge>>;
 
 vector<Cost> dijkstra
@@ -88,6 +91,12 @@ vector<Cost> dijkstra
   }
   return dist;
 }
+
+void add_edge(Graph& g,int u,int v,Cost c){
+  g[u].pb(Edge(c,v));
+  g[v].pb(Edge(c,u));
+} 
+
 
 int main(){
   int N,M; cin >> N >> M ;
