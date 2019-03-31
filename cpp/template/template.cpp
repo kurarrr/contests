@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define ALL(g) (g).begin(),(g).end()
 #define REP(i, x, n) for(int i = x; i < n; i++)
@@ -22,39 +21,4 @@ void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
 template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
 template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
-
-using ll = long long;
-using P = pair<int,int>;
-using Pl = pair<ll,ll>;
-using vi = vector<int>;
-using vvi = vector<vi>;
-using vl = vector<ll>;
-using vvl = vector<vl>;
-
-const long long LINF=1LL<<59;
-
-{% if mod %}
-const long long MOD = {{ mod }};
-{% endif %}
-{% if yes_str %}
-const string YES = "{{ yes_str }}";
-{% endif %}
-{% if no_str %}
-const string NO = "{{ no_str }}";
-{% endif %}
-
-{% if prediction_success %}
-void solve({{ formal_arguments }}){
-
-}
-{% endif %}
-
-int main(){
-  {% if prediction_success %}
-  {{input_part}}
-  solve({{ actual_arguments }});
-  {% else %}
-  // Failed to predict input format
-  {% endif %}
-  return 0;
-}
+void _main();
