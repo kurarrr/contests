@@ -77,20 +77,20 @@ template<typename T, int FAC_MAX> struct Comb { vector<T> fac, ifac;
 using mint =  ModInt<998244353>;
 
 struct Point {
-    ll x, y;
-    friend Point operator-(const Point& a, const Point& b) {
-        return {a.x - b.x, a.y - b.y};
-    }
-    friend ll operator*(const Point& a, const Point& b) {
-        return a.x*b.y - a.y*b.x;
-    }
-    friend bool are_aligned(const Point& a, const Point& b, const Point& c) {
-        return (a-c)*(b-c) == 0;
-    }
-    friend bool in(const Point& a, const Point& b, const Point& c) {
-        auto s = a-c, t = b-c;
-        return s.x * t.x <= 0 and s.y * t.y <= 0;
-    }
+  ll x, y;
+  friend Point operator-(const Point& a, const Point& b) {
+    return {a.x - b.x, a.y - b.y};
+  }
+  friend ll operator*(const Point& a, const Point& b) {
+    return a.x*b.y - a.y*b.x;
+  }
+  friend bool are_aligned(const Point& a, const Point& b, const Point& c) {
+    return (a-c)*(b-c) == 0;
+  }
+  friend bool in(const Point& a, const Point& b, const Point& c) {
+    auto s = a-c, t = b-c;
+    return s.x * t.x <= 0 and s.y * t.y <= 0;
+  }
 };
 
 void _main(){

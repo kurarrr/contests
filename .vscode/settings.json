@@ -55,5 +55,6 @@
       "complex": "cpp",
       "*.main": "cpp",
       "ratio": "cpp"
-    }
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Disabled"
   }

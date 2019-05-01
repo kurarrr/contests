@@ -1,5 +1,12 @@
+#ifdef DEBUG_IS_VALID
+#define DEB 1 
+#define _LIBCPP_DEBUG 0
+#else
+#define DEB 0
+#define NDEBUG
+#endif
+
 #include <bits/stdc++.h>
-using namespace std;
 
 #define ALL(g) (g).begin(),(g).end()
 #define REP(i, x, n) for(int i = x; i < n; i++)
@@ -22,6 +29,8 @@ void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
 template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
 template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
+void _main();
+int main(){ cin.tie(0); ios::sync_with_stdio(false); _main(); return 0;}
 
 using ll = long long;
 using P = pair<int,int>;
@@ -31,30 +40,43 @@ using vvi = vector<vi>;
 using vl = vector<ll>;
 using vvl = vector<vl>;
 
-const long long LINF=1LL<<59;
+const int mod=1e9+7,INF=1<<29;
+const double EPS=1e-5,PI=3.1415926535897932384626;
+const ll lmod = 1e9+7,LINF=1LL<<59; 
 
-{% if mod %}
-const long long MOD = {{ mod }};
-{% endif %}
-{% if yes_str %}
-const string YES = "{{ yes_str }}";
-{% endif %}
-{% if no_str %}
-const string NO = "{{ no_str }}";
-{% endif %}
-
-{% if prediction_success %}
-void solve({{ formal_arguments }}){
-
-}
-{% endif %}
-
-int main(){
-  {% if prediction_success %}
-  {{input_part}}
-  solve({{ actual_arguments }});
-  {% else %}
-  // Failed to predict input format
-  {% endif %}
-  return 0;
+void _main(){
+  ll N;
+  cin >> N ;
+  vvl node(N);
+  vl c(N),mi(N),ma(N);
+  rep(i,N){
+    cin >> c[i] ;
+    c[i]--; node[c[i]].pb(i);
+  }
+  rep(i,N){
+    if(node[i].size()){
+      mi[i] = *min_element(ALL(node[i]));
+      ma[i] = *max_element(ALL(node[i]));
+    }else{
+      mi[i] = LINF;
+      ma[i] = -LINF;
+    }
+  }
+  vl mi1(N+1,LINF),mi2(N+1,LINF),ma1(N+1,-LINF),ma2(N+1,-LINF);
+  rep(i,N){
+    mi1[i+1] = min(mi1[i],mi[i]);
+    ma1[i+1] = max(ma1[i],ma[i]);
+  }
+  rrep(i,N-1){
+    mi2[i] = min(mi2[i+1],mi[i]);
+    ma2[i] = max(ma2[i+1],ma[i]);
+  }
+  ll ans = 0;
+  rep(i,N){
+    ll m1 = min(mi1[c[i]],mi2[c[i]+1]);
+    ll m2 = max(ma1[c[i]],ma2[c[i]+1]);
+    chmax(ans,abs(i-m1));
+    chmax(ans,abs(i-m2));
+  }
+  cout << ans << endl;
 }
