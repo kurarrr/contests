@@ -6,7 +6,7 @@
 #define NDEBUG
 #endif
 
-#include "bits/stdc++.h"
+#include <bits/stdc++.h>
 
 #define ALL(g) (g).begin(),(g).end()
 #define REP(i, x, n) for(int i = x; i < n; i++)
@@ -44,31 +44,11 @@ const int mod=1e9+7,INF=1<<29;
 const double EPS=1e-5,PI=3.1415926535897932384626;
 const ll lmod = 1e9+7,LINF=1LL<<59; 
 
-using vd = vector<double>;
-using vvd = vector<vd>;
-using vvvd = vector<vvd>;
-
 void _main(){
-  int N;
-  cin >> N ;
-  vi cnt(3);
-  rep(i,N){
-    int a; cin >> a ;
-    cnt[a-1]++;
-  }
-  vvvd dp(N+1,vvd(N+1,vd(N+1,-1.0)));
-  dp[0][0][0] = 0;
-  function<double(int,int,int)> solve = [&](int i,int j,int k){
-    double& res = dp[i][j][k];
-    if(res!=-1.0) return res;
-    using D = double;
-    int s = i + j + k;
-    res = D(i)/D(s) * (i!=0 ? solve(i-1,j,k) : 0)
-         + D(j)/D(s) * (j!=0 ? solve(i+1,j-1,k) : 0)
-         + D(k)/D(s) * (k!=0 ? solve(i,j+1,k-1) : 0)
-         + D(N)/D(s);
-    return res;
+  auto solve = [&](){
+    ll ans = 0;
+    return ans;
   };
-  cout << fixed;
-  cout << setprecision(10) << solve(cnt[0],cnt[1],cnt[2]) << endl;
+  int t; cin >> t ;
+  rep(i,t) cout << "Case #" << i+1 << ": " << solve() << endl;
 }
