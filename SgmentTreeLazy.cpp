@@ -114,9 +114,13 @@ public:
     }
   };
   void update(int l, int r, const update_type &f) {
+    // update [l,r)
     update_sub(l, r, 1, 0, n, f);
   }
-  value_type query(int l, int r) { return query_sub(l, r, 1, 0, n); }
+  value_type query(int l, int r) {
+    // query [l,r)
+    return query_sub(l, r, 1, 0, n);
+  }
 };
 
 template <typename T> struct LeftHandSide {
