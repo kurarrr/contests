@@ -22,3 +22,16 @@ template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){
 template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
 template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
 void _main();
+
+using ll = long long;
+using P = pair<int,int>;
+using Pl = pair<ll,ll>;
+using vi = vector<int>;
+using vvi = vector<vi>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using vp = vector<Pl>;
+using vvp = vector<vp>;
+
+const int INF = 1<<29;
+const long long LINF=1LL<<59;
