@@ -1,6 +1,5 @@
 // https://yukicoder.me/submissions/235229
 
-#include "bits/stdc++.h"
 #include "../../template/template.cpp"
 
 template<typename V> struct SuperMultiSet {

@@ -1,6 +1,5 @@
 // https://atcoder.jp/contests/dp/submissions/5033754
 
-#include "bits/stdc++.h"
 #include "../../template/template.cpp"
 
 template <typename T, typename E>
