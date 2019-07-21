@@ -44,6 +44,8 @@ const ll lmod = 1e9+7,LINF=1LL<<59;
 
 // 素数
 vector<ll> primes(ll n) {
+  // O(n loglog(n))
+  // res: sz ~ O(n/log(n))
   vector<bool> is_prime(n,true);
   is_prime[0] = is_prime[1] = false;
   vector<ll> res;
