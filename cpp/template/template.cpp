@@ -49,5 +49,4 @@ using vvl = vector<vl>;
 using vp = vector<Pl>;
 using vvp = vector<vp>;
 
-const int INF = 1<<29;
 const long long LINF=1LL<<59;
