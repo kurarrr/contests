@@ -1,4 +1,13 @@
+#ifdef DEBUG_IS_VALID
+#define DEB 1 
+#define _LIBCPP_DEBUG 0
+#else
+#define DEB 0
+#define NDEBUG
+#endif
+
 #include <bits/stdc++.h>
+using namespace std;
 
 #define ALL(g) (g).begin(),(g).end()
 #define REP(i, x, n) for(int i = x; i < n; i++)
@@ -6,6 +15,8 @@
 #define RREP(i, x, n) for(int i = x; i >= n; i--)
 #define rrep(i, n) RREP(i,n,0)
 #define pb push_back
+#define fi first
+#define se second
 #pragma GCC optimize ("-O3")
 
 using namespace std;
@@ -21,7 +32,12 @@ void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
 template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
 template<class T> inline bool chmin(T& a,T const& b){if(a<=b) return false; a=b; return true;}
-void _main();
+void solve();
+int main(void) {
+  std::cout << std::fixed << std::setprecision(15);
+  solve();
+	return 0;
+}
 
 using ll = long long;
 using P = pair<int,int>;
