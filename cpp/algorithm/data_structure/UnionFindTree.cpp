@@ -2,7 +2,6 @@
 
 struct UnionFindTree{
   vector<int> par, rank, size;
-  // if there is no size in constructor, size means size
   UnionFindTree(int N)
   : par(vector<int>(N,0)), rank(vector<int>(N,0)), size(vector<int>(N,1LL))
   {
