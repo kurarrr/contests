@@ -1,5 +1,3 @@
-// https://atcoder.jp/contests/abc135/submissions/6795868
-
 #include "../../template/template.cpp"
 #include "../graph/topological_sort.cpp"
 
@@ -40,16 +38,21 @@ const int HashTuple::base = 9973;
 template<typename Hash>
 struct RollingHash {
   int N, tuple_size = Hash::Mod.size();
-  vector<Hash> hs, pw;
+  static vector<Hash> pw;
+  vector<Hash> hs;
   RollingHash(){}
   RollingHash(const string &s)
-  : N(s.size()), hs(N+1), pw(N+1)
-  {
-    pw[0] = Hash(1);
+  : N(s.size()), hs(N+1) {
+    assert(N <= pw.size());
     for (int j = 0; j < N; j++) {
-      pw[j+1] = pw[j] * Hash::base;
       hs[j+1] = hs[j] * Hash::base + s[j];
     }
+  }
+  static void init(int MAX_N){
+    pw.resize(MAX_N+1);
+    pw[0] = Hash(1);
+    for(int j = 0; j < MAX_N; j++)
+      pw[j+1] = pw[j] * Hash::base;
   }
   Hash hash(int l, int r) {
     // i-th hash[l,r)
@@ -57,8 +60,9 @@ struct RollingHash {
     return hs[r] - hs[l] * pw[r-l];
   }
 };
+template<typename Hash> vector<Hash> RollingHash<Hash>::pw;
 
-void abc_135(){
+void abc_135_f(){
   string S,T;
   cin >> S >> T;
   ll N, M;
@@ -66,6 +70,7 @@ void abc_135(){
   ll sz = 2 * max(M,N);
   string W(sz, ' ');
   rep(i,sz) W[i] = S[i%N];
+  RollingHash<HashTuple>::init(sz);
   RollingHash<HashTuple> rh1(W), rh2(T);
   vvi g(N);
   auto h2 = rh2.hash(0,M);
@@ -86,7 +91,7 @@ void abc_135(){
   cout << *max_element(ALL(dp)) << endl;
 }
 
-void solve(){
-  abc_135();
+int main(){
+  abc_135_f();
   return 0;
 }
