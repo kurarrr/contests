@@ -1,4 +1,3 @@
-#pragma once
 #ifdef DEBUG_IS_VALID
 #define DEB 1 
 #define _LIBCPP_DEBUG 0
@@ -50,4 +49,24 @@ using vvl = vector<vl>;
 using vp = vector<Pl>;
 using vvp = vector<vp>;
 
+const int INF = (1<<30)-10;
 const long long LINF=1LL<<59;
+
+vector<pair<char,int>> run_length_compression(string S){
+  using Pci = pair<char,int>;
+  vector<Pci> res;
+  S += '-'; // 番兵
+  int N = S.size();
+  char now = S[0];
+  int cnt = 0;
+  for(int i = 0; i < N; i++){
+    if(S[i] == now) cnt++;
+    else res.push_back({now, cnt}), now = S[i], cnt = 1;
+  }
+  return res;
+}
+
+void solve(){
+  auto res = run_length_compression("aaaammmmodkk");
+  dump(res);
+}
