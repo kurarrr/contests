@@ -20,10 +20,10 @@ const int MAX_N = 41;
 
 class MaximumMatching {
   /*
-  Maximum Matching in General Graphs
-  - O(nm \log_{\max\{2, 1 + m/n\}} n) time
-  - O(n + m) space
-  Note: each vertex is 1-indexed.
+    Maximum Matching in General Graphs
+    - O(nm \log_{\max\{2, 1 + m/n\}} n) time
+    - O(n + m) space
+    Note: each vertex is 1-indexed.
   */
 
   public:
