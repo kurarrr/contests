@@ -63,7 +63,7 @@ struct SqrtDecomposition {
       }
     }
   }
-  // [s, t)
+  // update [s, t)
   void update(int s, int t, ll x) {
     for (int k = 0; k < K; ++k) {
       int l = k * sqrtN, r = (k + 1) * sqrtN;
