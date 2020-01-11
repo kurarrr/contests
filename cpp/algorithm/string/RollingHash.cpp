@@ -1,6 +1,7 @@
 #include "../../template/template.cpp"
 #include "../graph/topological_sort.cpp"
 
+std::mt19937 engine(chrono::steady_clock::now().time_since_epoch().count());
 class RollingHash
 {
   using ull = unsigned long long;
@@ -13,6 +14,7 @@ class RollingHash
   static vector<ll> powMemo;
   vector<ull> dat;
 public:
+  long long size() const { return N; }
   void init(){
     while(Base <= 129) Base = engine();
     if(powMemo.size() < N) {
@@ -31,7 +33,7 @@ public:
       dat[i + 1] = CalcMod(Mul(dat[i], Base) + s[i]);
   }
 
-  ull hash(int l, int r)
+  ull hash(int l, int r) const
   {
     return CalcMod(dat[r] + POSITIVIZER - Mul(dat[l], powMemo[r-l]));
   }
@@ -40,7 +42,7 @@ public:
     return hash(l1, r1) == hash(l2, r2);
   }
 
-  ull Mul(ull l, ull r)
+  ull Mul(ull l, ull r) const
   {
     long long lu = l >> 31;
     long long ld = l & MASK31;
@@ -50,16 +52,27 @@ public:
     return ((lu * ru) << 1) + ld * rd + ((middleBit & MASK30) << 31) + (middleBit >> 30);
   }
 
-  ull CalcMod(ull val)
+  ull CalcMod(ull val) const
   {
     val = (val & MOD) + (val >> 61);
     if (val > MOD) val -= MOD;
     return val;
   }
 };
-std::mt19937 engine(chrono::steady_clock::now().time_since_epoch().count());
 unsigned long long RollingHash::Base = engine();
 vector<long long> RollingHash::powMemo = {};
+
+vector<long long> kmp_like_search(const RollingHash &rh1, const RollingHash &rh2){
+  // rh1(S) の substring であって rh2(T) と一致するものを探す
+  // res: vector of index of substring
+  ll a = rh1.size(), b = rh2.size();
+  vector<long long> res;
+  if(a < b) return res;
+  for(ll i = 0; i + b <= a; i++){
+    if(rh1.hash(i, i + b) == rh2.hash(0, b)) res.push_back(i);
+  }
+  return res;
+}
 
 void abc_135_f(){
   // https://atcoder.jp/contests/abc135/submissions/9146451
@@ -88,6 +101,33 @@ void abc_135_f(){
     for(auto v:g[u]) chmax(dp[v], dp[u]+1LL);
   }
   cout << *max_element(ALL(dp)) << endl;
+}
+
+void abc_150_F(long long N, std::vector<long long> a, std::vector<long long> b){
+  // https://atcoder.jp/contests/abc150/submissions/9412422
+  ll bit = 32;
+  vvl ans(N);
+  rep(bb, bit){
+    rep(flip, 2){
+      string S(N, ' '), T(N, ' ');
+      rep(i, N){
+        S[i] = char((((a[i] >> bb) & 1LL) ^ flip) + '0');
+        T[i] = char((((b[i] >> bb) & 1LL)) + '0');
+      }
+      S += S.substr(0, N-1);
+      auto idxs = kmp_like_search(RollingHash(S), RollingHash(T));
+      for(auto idx: idxs){
+        ans[idx].pb(flip << bb);
+      }
+    }
+  }
+  rep(i,N){
+    if(ans[i].size() == bit){
+      ll x = 0;
+      rep(bb, bit) x ^= ans[i][bb];
+      cout << i << " " << x << endl;
+    }
+  }
 }
 
 int main(){
