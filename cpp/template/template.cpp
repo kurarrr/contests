@@ -1,6 +1,5 @@
-#pragma once
 #ifdef DEBUG_IS_VALID
-#define DEB 1 
+#define DEB 1
 #define _LIBCPP_DEBUG 0
 #else
 #define DEB 0
@@ -11,9 +10,9 @@
 using namespace std;
 
 #define ALL(g) (g).begin(),(g).end()
-#define REP(i, x, n) for(int i = x; i < n; i++)
+#define REP(i, x, n) for(Int i = x; i < n; i++)
 #define rep(i,n) REP(i,0,n)
-#define RREP(i, x, n) for(int i = x; i >= n; i--)
+#define RREP(i, x, n) for(Int i = x; i >= n; i--)
 #define rrep(i, n) RREP(i,n,0)
 #define pb push_back
 #define fi first
@@ -40,14 +39,15 @@ int main(void) {
 	return 0;
 }
 
+using Int = long long;
 using ll = long long;
-using P = pair<int,int>;
-using Pl = pair<ll,ll>;
-using vi = vector<int>;
+using P = pair<Int,Int>;
+using vi = vector<Int>;
 using vvi = vector<vi>;
-using vl = vector<ll>;
-using vvl = vector<vl>;
-using vp = vector<Pl>;
+using vp = vector<P>;
 using vvp = vector<vp>;
 
-const long long LINF=1LL<<59;
+const Int INF = (1LL<<50);
+
+void solve(){
+}
