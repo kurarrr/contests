@@ -27,6 +27,17 @@ template<typename T1,typename T2>ostream& operator << (ostream& os, pair<T1,T2> 
 template<typename T>ostream& operator << (ostream& os, vector<T>& vec) { os << "{"; for (int i = 0; i<vec.size(); i++) os << vec[i] << (i + 1 == vec.size() ? "" : ", "); os << "}"; return os; }
 template<typename T>ostream& operator << (ostream& os, set<T>& st){cout << "{"; for(auto itr = st.begin(); itr != st.end(); itr++) cout << *itr << (next(itr)!=st.end() ? ", " : ""); cout << "}"; return os;}
 template<typename T1,typename T2>ostream& operator << (ostream& os, map<T1,T2> mp){cout << "{"; for(auto itr = mp.begin(); itr != mp.end(); itr++) cout << "(" << (itr->first) << ", " << (itr->second) << ")" << (next(itr)!=mp.end() ? "," : ""); cout << "}"; return os; }
+template<typename T1,typename T2>ostream& operator << (ostream& os, unordered_map<T1,T2> mp){cout << "{"; for(auto itr = mp.begin(); itr != mp.end(); itr++) cout << "(" << (itr->first) << ", " << (itr->second) << ")" << (next(itr)!=mp.end() ? "," : ""); cout << "}"; return os; }
+template <size_t N = 0, typename T> void print_tuple(ostream& os, const T& val) {
+  if constexpr(N == 0) os << "("s;
+  if constexpr(N + 1 < std::tuple_size<T>::value) {
+    os << std::get<N>(val) << ", "s;
+    print_tuple<N+1>(os, val);
+  }else if constexpr(N + 1 == std::tuple_size<T>::value){
+    os << std::get<N>(val) << ")"s;
+  }
+}
+template<typename ...T> ostream& operator << (ostream& os, tuple<T...> val){ print_tuple(os, val); return os; }
 
 void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
@@ -50,4 +61,6 @@ using vvp = vector<vp>;
 const Int INF = (1LL<<50);
 
 void solve(){
+  tuple<int,int,double> a{1, 2, 3.0};
+  cout << a << endl;
 }
