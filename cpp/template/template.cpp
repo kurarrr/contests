@@ -39,6 +39,40 @@ template <size_t N = 0, typename T> void print_tuple(ostream& os, const T& val) 
 }
 template<typename ...T> ostream& operator << (ostream& os, tuple<T...> val){ print_tuple(os, val); return os; }
 
+template < typename T > struct is_pair : std::false_type { } ;
+template < typename T1, typename T2 > struct is_pair< std::pair<T1, T2> > : std::true_type { } ;
+template < typename T > constexpr bool is_pair_v = is_pair<T>::value ;
+template < typename Iterator >
+class with_index_iterator : public Iterator {
+  std::size_t i = 0;
+public:
+  with_index_iterator( Iterator iter ) : Iterator( iter ) {}
+  auto & operator ++(){
+    ++i ;
+    this->Iterator::operator ++() ;
+    return *this ;
+  }
+  auto operator *() const noexcept
+  {
+    if constexpr ( is_pair_v< typename std::iterator_traits<Iterator>::value_type > ) {
+      auto & pair = *static_cast<Iterator const &>(*this) ;
+      return std::make_tuple( i, pair.first, pair.second ) ;
+    } else {
+      return std::make_pair( i, *static_cast<Iterator const &>(*this) ) ;
+    }
+  }
+};
+
+template < typename Range >
+class with_index {
+  Range& range ;
+public:
+  with_index( Range & range ) : range(range) {}
+  auto begin() const { return with_index_iterator{ std::begin(range) } ; }
+  auto end() const { return with_index_iterator{ std::end(range) } ; }
+};
+
+
 void dump_func(){DUMPOUT << endl;}
 template <class Head, class... Tail>void dump_func(Head&& head, Tail&&... tail){ DUMPOUT << head; if (sizeof...(Tail) == 0) { DUMPOUT << " "; } else { DUMPOUT << ", "; } dump_func(std::move(tail)...);}
 template<class T> inline bool chmax(T& a,T const& b){if(a>=b) return false; a=b; return true;}
@@ -61,6 +95,4 @@ using vvp = vector<vp>;
 const Int INF = (1LL<<50);
 
 void solve(){
-  tuple<int,int,double> a{1, 2, 3.0};
-  cout << a << endl;
 }
